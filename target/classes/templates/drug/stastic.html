@@ -1,0 +1,70 @@
+<div class="cl">
+    <div id="main" class="main" style="width: 500px;height:400px;"></div>
+    <div id="main1" class="main1" style="width: 600px;height:400px;"></div>
+</div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    var myChart1 = echarts.init(document.getElementById('main1'));
+    var $ = layui.jquery
+    $.ajax({
+        url: '/drug/todayS',
+        type: 'get',
+        contentType: "application/json",
+        success: function (data) {
+            var datax = data.dataX
+            var datay = data.dataY
+            var datay1 = data.dataY1
+            var datao = data.dataO;
+            var option = {
+                title: {
+                    text: '今日药品出入库统计'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['入库', '出库']
+                },
+                xAxis: {
+                    data: datax,
+                    type: 'category',
+                    "axisLabel": {
+                        interval: 0
+                    }
+
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    name: '入库',
+                    type: 'bar',
+                    data: datay1
+                }, {
+                    name: '出库',
+                    type: 'bar',
+                    data: datay
+                }
+                ]
+            };
+            var option1 = {
+                title: {
+                    text: '今日出入库统计'
+                },
+                legend: {
+                    data: ['入库', '出库']
+                },
+                series: [{
+                    type: 'pie',
+                    data: datao
+                }
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option)
+            myChart1.setOption(option1)
+        },
+    });
+
+
+</script>

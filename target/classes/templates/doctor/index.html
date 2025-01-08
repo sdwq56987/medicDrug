@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>医药管理系统</title>
+    <link rel="stylesheet" href="../css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">医药管理系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;" id="self">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    贤心
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="/logout">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;" data-href="/drug/index1">药品信息</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" data-href="/patient/patients2">查看病患信息</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" data-href="/prescription/all">药方管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;" id="content">
+
+            <div>
+                <table id="drugTable" lay-filter="drugTable">
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="../layui.js"></script>
+<script>
+    document.getElementById("self").innerHTML = window.sessionStorage.getItem("username")
+    //JavaScript代码区域
+    layui.use(['element', 'jquery'], function () {
+        var element = layui.element;
+        var $ = layui.jquery;
+        $("a").click(function () {
+            var url = $(this).data("href");
+            $("#content").load(url);
+
+        });
+
+    });
+    layui.use(['table', 'layer', 'jquery'], function () {
+        var table = layui.table;
+        var $ = layui.jquery
+        var form = layui.form
+        table.render({
+            elem: '#drugTable'
+            , height: 600
+            , url: '/drug/all' //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                {field: 'id', title: 'ID', width: 60, sort: true, fixed: 'left'}
+                , {field: 'drugName', title: '药品名称', width: 140}
+                , {field: 'drugCount', title: '数量', width: 80}
+                , {field: 'factory', title: '生产厂家', width: 240}
+                , {field: 'price', title: '价格（元）', width: 100}
+                , {field: 'drugFunction', title: '功能主治', width: 400}
+                , {field: 'size', title: '规格', width: 100}
+
+            ]]
+        });
+
+
+    });
+</script>
+</body>
+</html>

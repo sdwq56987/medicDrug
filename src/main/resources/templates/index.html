@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>医药管理系统</title>
+    <link rel="stylesheet" href="css/layui.css">
+    <link rel="stylesheet" href="css/sts.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">医药管理系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;" id="self">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    贤心
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="/logout">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+
+                <li class="layui-nav-item layui-nav-itemed" lay-filter="drugReport">
+                    <a class="" href="javascript:;" data-href="/drug/report">药品报表</a>
+                </li>
+                <li class="layui-nav-item" lay-filter="drugReport">
+                    <a class="" href="javascript:;">报表统计</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" data-href="/drug/stastic">今日统计</a></dd>
+                        <dd><a href="javascript:;" data-href="/drug/monthSta">月统计</a></dd>
+                        <dd><a href="javascript:;" data-href="/drug/quarterSta">季度统计</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" data-href="/user/alluser">帐号管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" data-href="/patient/patients">所有病患信息</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;" data-href="/doctor/doctors">所有医生信息</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;" id="content">
+            <div>
+                <table id="drugReportTable" lay-filter="drugReportTable">
+                </table>
+            </div>
+            <script type="text/html" id="toolbarDemo">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="today">今日</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="month">这个月</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="season">这个季度</button>
+                </div>
+            </script>
+        </div>
+    </div>
+
+</div>
+<script src="layui.js"></script>
+<script src="echarts.min.js"></script>
+<script>
+    document.getElementById("self").innerHTML = window.sessionStorage.getItem("username")
+    //JavaScript代码区域
+    layui.use(['element', 'jquery'], function () {
+        var element = layui.element;
+        var $ = layui.jquery;
+        $("a").click(function () {
+            var url = $(this).data("href");
+            $("#content").load(url);
+
+        });
+    });
+    layui.use(['table', 'layer', 'jquery'], function () {
+        var table = layui.table;
+        var $ = layui.jquery
+        var form = layui.form
+        table.render({
+            elem: '#drugReportTable'
+            , height: 600
+            , url: '/actionRecord/all' //数据接口
+            , page: true //开启分页
+            , toolbar: '#toolbarDemo'
+            , cols: [[ //表头
+                {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'}
+                , {field: 'drugName', title: '药品名称', width: 240}
+                , {field: 'action', title: '操作', width: 180}
+                , {field: 'amount', title: '数量', width: 180}
+                , {field: 'actionTime', title: '时间', width: 250}
+            ]]
+        });
+        table.on('toolbar(drugReportTable)', function (obj) {
+            if (obj.event === 'today') {
+                table.render({
+                    elem: '#drugReportTable'
+                    , height: 600
+                    , url: '/actionRecord/today' //数据接口
+                    , page: true //开启分页
+                    , toolbar: '#toolbarDemo'
+                    , cols: [[ //表头
+                        {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'}
+                        , {field: 'drugName', title: '药品名称', width: 240}
+                        , {field: 'action', title: '操作', width: 180}
+                        , {field: 'amount', title: '数量', width: 180}
+                        , {field: 'actionTime', title: '时间', width: 250}
+                    ]]
+                });
+            } else if (obj.event === 'month') {
+                table.render({
+                    elem: '#drugReportTable'
+                    , height: 600
+                    , url: '/actionRecord/month' //数据接口
+                    , page: true //开启分页
+                    , toolbar: '#toolbarDemo'
+                    , cols: [[ //表头
+                        {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'}
+                        , {field: 'drugName', title: '药品名称', width: 240}
+                        , {field: 'action', title: '操作', width: 180}
+                        , {field: 'amount', title: '数量', width: 180}
+                        , {field: 'actionTime', title: '时间', width: 250}
+                    ]]
+                });
+            } else if (obj.event === 'season') {
+                table.render({
+                    elem: '#drugReportTable'
+                    , height: 600
+                    , url: '/actionRecord/season' //数据接口
+                    , page: true //开启分页
+                    , toolbar: '#toolbarDemo'
+                    , cols: [[ //表头
+                        {field: 'id', title: 'ID', width: 100, sort: true, fixed: 'left'}
+                        , {field: 'drugName', title: '药品名称', width: 240}
+                        , {field: 'action', title: '操作', width: 180}
+                        , {field: 'amount', title: '数量', width: 180}
+                        , {field: 'actionTime', title: '时间', width: 250}
+                    ]]
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

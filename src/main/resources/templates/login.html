@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>医药管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="css/layui.css" media="all"/>
+    <link rel="stylesheet" href="css/login.css" media="all"/>
+</head>
+<body>
+<!--登录背景-->
+<div class="video_mask">
+    <img src="common/drug.jpeg">
+</div>
+<div class="site-text" style="margin: 5%; display: none" id="window2">
+    <form class="layui-form" id="addpatient" lay-filter="addpatient">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" id="patientName" name="patientName" autocomplete="off" placeholder="请输入用户名   "
+                       class="layui-input">
+            </div>
+            <br> <br>
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" id="password" name="password" autocomplete="off" placeholder="请输入用户名   "
+                       class="layui-input">
+            </div>
+            <br> <br>
+            <label class="layui-form-label">真实姓名</label>
+            <div class="layui-input-block">
+                <input type="text" id="anoName" name="anoName" autocomplete="off" placeholder="请输入真实姓名"
+                       class="layui-input">
+            </div>
+            <br> <br>
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-block">
+                <input type="text" id="age" name="age" autocomplete="off" placeholder="请输入年龄"
+                       class="layui-input">
+            </div>
+            <br> <br>
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="text" id="gender" name="gender" autocomplete="off" placeholder="请输入性别"
+                       class="layui-input">
+            </div>
+            <br> <br>
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-block">
+                <input type="text" id="ptype" name="ptype" autocomplete="off" placeholder="请输入患者的类型"
+                       class="layui-input">
+            </div>
+        </div>
+    </form>
+</div>
+<div class="login">
+    <h1>医药管理系统</h1>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <input class="layui-input" name="username" placeholder="用户名" lay-verify="required" type="text"
+                   autocomplete="off">
+        </div>
+        <div class="layui-form-item">
+            <input class="layui-input" name="password" placeholder="密码" lay-verify="required" type="password"
+                   autocomplete="off">
+        </div>
+        <div class="layui-form-item" pane="">
+            <!--            <label class="layui-form-label"></label>-->
+            <div class="layui-input-block">
+                <select name="role" lay-filter="role" class="fff">
+                    <option value="3">医生</option>
+                    <option value="1" selected="">管理员</option>
+                    <option value="4">病患</option>
+                    <option value="2">药房管理员</option>
+                </select>
+            </div>
+        </div>
+        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="loginS" type="button">登录</button>
+        <div>
+            <br>
+        </div>
+        <button class="layui-btn layui-btn-fluid" onclick="addpa()" lay-filter="addPat" type="button">注册病患</button>
+    </form>
+</div>
+<script src="layui.js"></script>
+<script>
+    function addpa() {
+        layui.use(['form', 'jquery', 'layer'], function () {
+
+            var $ = layui.jquery
+            var form = layui.form;
+            layer.open({
+                type: 1
+                , content: $("#window2")
+                , btn: '确定'
+                , btnAlign: 'c' //按钮居中
+                , area: ['500px', '500px']
+                , shade: 0 //不显示遮罩
+                , yes: function () {
+                    var data1 = form.val("addpatient");
+                    if (data1.patientName == '') {
+                        layer.confirm("用户名不能为空！")
+                    } else if (data1.password == '') {
+                        layer.confirm("密码不能为空！")
+                    } else if (data1.ptype == '') {
+                        layer.confirm("用户类型不能为空！")
+                    } else if (data1.anoName == '') {
+                        layer.confirm("真实姓名不能为空！")
+                    } else {
+                        var postdata = {
+                            "patientName": data1.patientName,
+                            "anoName": data1.anoName,
+                            "gender": data1.gender,
+                            "age": data1.age,
+                            "password": data1.password,
+                            "ptype": data1.ptype
+                        }
+                        $.ajax({
+                            url: '/patient/add',
+                            type: 'post',
+                            contentType: "application/json",
+                            data: JSON.stringify(postdata),
+                            success: function (data) {
+                                if (data.data == -1) {
+                                    layer.confirm("用户名已存在！")
+                                } else {
+                                    layer.confirm("注册成功！", function () {
+                                        //data是默认值
+                                        layer.closeAll();
+                                    })
+                                }
+
+
+                            },
+
+                        })
+                    }
+
+
+                }
+            });
+        });
+    }
+
+    layui.use(['form', 'jquery', 'layer'], function () {
+        var $ = layui.jquery
+        var form = layui.form;
+        //监听提交
+
+        form.on('submit(loginS)', function (data1) {
+            $.ajax({
+                type: "POST",
+                url: "/login",
+                data: JSON.stringify(data1.field),
+                contentType: "application/json",
+                error: function (request) {
+                    alert("连接错误")
+                },
+                success: function (data) {
+                    if (data.code == 200) {
+                        window.sessionStorage.setItem("username", data1.field.username)
+                        if (data.type == 1) {
+                            window.location.href = "/index";
+                            alert("您的帐户类型为管理员");
+                        } else if (data.type == 2) {
+                            window.location.href = "/drugadminuser/index";
+                            alert("您的帐户类型为药房管理员");
+                        } else if (data.type == 3) {
+                            window.location.href = "/doctor/index";
+                            alert("您的帐户类型为医生");
+                        } else if (data.type == 4) {
+                            window.location.href = "/patient/index";
+                            alert("您的帐户类型为患者");
+                        }
+                    }
+                    if (data.code == 404) {
+                        alert("用户名或密码错误");
+                    }
+                    if (data.code == 424) {
+                        alert("用户类型错误");
+                    }
+
+                }
+            })
+        });
+    });
+
+</script>
+</body>
+</html>
